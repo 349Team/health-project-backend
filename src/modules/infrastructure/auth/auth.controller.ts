@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
@@ -11,6 +12,7 @@ import { JoiPipe } from 'nestjs-joi';
 import { User } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { UserDto } from './dto/user.dto';
+import * as fs from 'fs';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -30,5 +32,13 @@ export class AuthController {
     @Body(new JoiPipe({ group: 'LOGIN' })) userDto: UserDto,
   ): Promise<string | never> {
     return this.service.login(userDto);
+  }
+
+  @Get('ping')
+  @HttpCode(HttpStatus.OK)
+  async ping(): Promise<any> {
+    const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+    const { version, name, description } = packageJson;
+    return { name, version, description };
   }
 }
