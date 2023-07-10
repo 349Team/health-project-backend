@@ -1,8 +1,8 @@
 {
-  "name": "nest-starter",
+  "name": "Health-Project",
   "version": "0.0.1",
-  "description": "Repositório para desenvolvimento de aplicações web com o framework NestJS nas disciplinas de Engenharia de Software 1 e Projeto Integrador do câmpus Campo Mourão da UTFPR.",
-  "author": "Gabriel Leite da Rocha",
+  "description": "Backend Health Project",
+  "author": "349Team",
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
