@@ -5,7 +5,7 @@ import { Student } from 'src/modules/domain/student/entities/student.entity';
 import { Evaluation } from 'src/modules/domain/evaluations/entities/evaluation.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 
-enum Role {
+export enum Role {
   ADMIN = 'ADMIN',
   TRAINER = 'TRAINER',
 }

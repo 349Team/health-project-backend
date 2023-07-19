@@ -17,9 +17,10 @@ import { User } from '../../infrastructure/user/entities/user.entity';
 import { AuthUser } from 'src/common/decorators/auth-user.decorator';
 import { Student } from './entities/student.entity';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { RolesGuard } from 'src/modules/infrastructure/auth/roles.guard';
 
 @Controller('student')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
