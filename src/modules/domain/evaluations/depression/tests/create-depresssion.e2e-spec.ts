@@ -57,7 +57,7 @@ beforeAll(async () => {
       emergencyContact: '44999499994',
       contact: '44999499994',
       address: 'Rua Lorem Ipsum',
-      note:			'teste',
+      note: 'teste',
       birthDate: '1960-06-12T03:00:00.000Z',
       flag: true,
     })
@@ -71,32 +71,32 @@ afterAll(async () => {
 });
 
 describe('Criar avaliações de Depressão', () => {
-    it(`/:studentId (CREATE) sucesso na criação`, async () => {
-        return await server
-          .post(`/evaluation/${studentId}`)
-          .send({
-            "type": "Depression",
-            "data": {
-                "date" : "2022-11-10T03:00:00.000Z",
-                "campo1" : true,
-                "campo2" : false,
-                "campo3" : false,
-                "campo4" : false,
-                "campo5" : false,
-                "campo6" : true,
-                "campo7" : false,
-                "campo8" : false,
-                "campo9" : false,
-                "campo10" : true,
-                "campo11" : true,
-                "campo12" : false,
-                "campo13" : false,
-                "campo14" : false,
-                "campo15" : true,
-                "result" : 5
-            }
-          })
-          .set('Authorization', `Bearer ${token}`)
-          .expect(201);
-      });
+  it(`/:studentId (CREATE) sucesso na criação`, async () => {
+    return await server
+      .post(`/evaluation/${studentId}`)
+      .send({
+        type: 'Depression',
+        data: {
+          date: '2022-11-10T03:00:00.000Z',
+          campo1: true,
+          campo2: false,
+          campo3: false,
+          campo4: false,
+          campo5: false,
+          campo6: true,
+          campo7: false,
+          campo8: false,
+          campo9: false,
+          campo10: true,
+          campo11: true,
+          campo12: false,
+          campo13: false,
+          campo14: false,
+          campo15: true,
+          result: 5,
+        },
+      })
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201);
+  });
 });

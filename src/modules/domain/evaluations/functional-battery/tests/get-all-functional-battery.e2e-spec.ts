@@ -72,70 +72,70 @@ afterAll(async () => {
 });
 
 describe('Buscar avaliações de Bateria Funcional', () => {
-    it(`/:studentId (GET) deve receber um array vazio como resultado`, async () => {
-      return await server
-        .get(
-          `/evaluation?studentId=${studentId}&page=1&limit=50&orderBy=updatedAt`,
-        )
-        .set('Authorization', `Bearer ${token}`)
-        .expect((res) => {
-          expect(res.body.data).toStrictEqual([]);
-        })
-        .expect(200);
-    });
-  
-    it(`/:studentId (GET) deve receber um array não vazio como resultado`, async () => {
-      for (let i = 0; i < 5; i++) {
-        await server
-            .post(`/evaluation/${studentId}`)
-            .send({
-                type: 'functionalBattery',
-                data: {
-                  date: '2022-10-12T03:00:00.000Z',  
-                  sitAndDownResult: 21,
-                  sitAndDownPercent: 85,
-                  sitAndDownClassification:'ÓTIMO',
-                  elbowFlexionResult: 21,
-                  elbowFlexionPercent: 65,
-                  elbowFlexionClassification: 'BOM',
-                  marchWouldParkResult: 98,
-                  marchWouldParkPercent: 45,
-                  marchWouldParkClassification: 'REGULAR',
-                  sitAndReachYourFeetResult: 6.7,
-                  sitAndReachYourFeetPercent: 90,
-                  sitAndReachYourFeetClassification:'ÓTIMO',
-                  tugResult:3.3,
-                  tugPercent: 85,
-                  tugClassification: 'ÓTIMO',
-                  reachTheBackResult: 9.5,
-                  reachTheBackPercent: 10,
-                  reachTheBackClassification: 'RUIM'
-              }
-            })
-            .set('Authorization', `Bearer ${token}`);
-      }
-  
-      return await server
-        .get(
-          `/evaluation?studentId=${studentId}&page=1&limit=50&orderBy=updatedAt`,
-        )
-        .set('Authorization', `Bearer ${token}`)
-        .expect((res) => {
-          expect(res.body.meta.totalItems).toBe(5);
-        })
-        .expect(200);
-    });
-  
-    it(`/:studentId (GET) deve falhar devido a página invalida`, async () => {
-      const page = -1;
-      const limit = 5;
-      const orderBy = 'updatedAt';
-  
-      return await server
-        .get(
-          `/evaluation?studentId=${studentId}&page=${page}&limit=${limit}&orderBy=${orderBy}`,
-        )
-        .set('Authorization', `Bearer ${token}`)
-        .expect(400);
-    });
+  it(`/:studentId (GET) deve receber um array vazio como resultado`, async () => {
+    return await server
+      .get(
+        `/evaluation?studentId=${studentId}&page=1&limit=50&orderBy=updatedAt`,
+      )
+      .set('Authorization', `Bearer ${token}`)
+      .expect((res) => {
+        expect(res.body.data).toStrictEqual([]);
+      })
+      .expect(200);
   });
+
+  it(`/:studentId (GET) deve receber um array não vazio como resultado`, async () => {
+    for (let i = 0; i < 5; i++) {
+      await server
+        .post(`/evaluation/${studentId}`)
+        .send({
+          type: 'functionalBattery',
+          data: {
+            date: '2022-10-12T03:00:00.000Z',
+            sitAndDownResult: 21,
+            sitAndDownPercent: 85,
+            sitAndDownClassification: 'ÓTIMO',
+            elbowFlexionResult: 21,
+            elbowFlexionPercent: 65,
+            elbowFlexionClassification: 'BOM',
+            marchWouldParkResult: 98,
+            marchWouldParkPercent: 45,
+            marchWouldParkClassification: 'REGULAR',
+            sitAndReachYourFeetResult: 6.7,
+            sitAndReachYourFeetPercent: 90,
+            sitAndReachYourFeetClassification: 'ÓTIMO',
+            tugResult: 3.3,
+            tugPercent: 85,
+            tugClassification: 'ÓTIMO',
+            reachTheBackResult: 9.5,
+            reachTheBackPercent: 10,
+            reachTheBackClassification: 'RUIM',
+          },
+        })
+        .set('Authorization', `Bearer ${token}`);
+    }
+
+    return await server
+      .get(
+        `/evaluation?studentId=${studentId}&page=1&limit=50&orderBy=updatedAt`,
+      )
+      .set('Authorization', `Bearer ${token}`)
+      .expect((res) => {
+        expect(res.body.meta.totalItems).toBe(5);
+      })
+      .expect(200);
+  });
+
+  it(`/:studentId (GET) deve falhar devido a página invalida`, async () => {
+    const page = -1;
+    const limit = 5;
+    const orderBy = 'updatedAt';
+
+    return await server
+      .get(
+        `/evaluation?studentId=${studentId}&page=${page}&limit=${limit}&orderBy=${orderBy}`,
+      )
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
+  });
+});

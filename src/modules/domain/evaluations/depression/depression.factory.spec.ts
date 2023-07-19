@@ -9,9 +9,7 @@ describe('DepressionFactory', () => {
       providers: [DepressionFactory],
     }).compile();
 
-    service = module.get<DepressionFactory>(
-      DepressionFactory,
-    );
+    service = module.get<DepressionFactory>(DepressionFactory);
   });
 
   it('should be defined', () => {
