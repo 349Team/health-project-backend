@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../user/entities/user.entity';
+import { Role, User } from '../user/entities/user.entity';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
 
 @Injectable()
@@ -9,7 +9,24 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {}
+  ) {
+    async function seed() {
+      const existingAdminUser = await usersRepository.findOne({
+        where: { role: Role.ADMIN },
+      });
+
+      if (!existingAdminUser) {
+        const adminUser = new User();
+        adminUser.name = 'Admin';
+        adminUser.email = 'admin@admin.com';
+        adminUser.password = 'adminpass';
+        adminUser.role = Role.ADMIN;
+        await usersRepository.save(adminUser);
+      }
+    }
+
+    seed();
+  }
 
   async findAll() {
     return await this.usersRepository.find();
