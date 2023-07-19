@@ -14,15 +14,21 @@ import { PrePosService } from './prePos.service';
 import { CreatePrePosDto } from './dto/createPrePos.dto';
 import { UpdatePrePosDto } from './dto/updatePrePos.dto';
 import { AuthUser } from 'src/common/decorators/auth-user.decorator';
-import { User } from 'src/modules/infrastructure/user/entities/user.entity';
+import {
+  Role,
+  User,
+} from 'src/modules/infrastructure/user/entities/user.entity';
 import { JoiPipe } from 'nestjs-joi';
 import { PrePos } from './entities/prePos.entity';
 import { Pagination } from 'src/common/decorators/pagination.decorator';
 import { PaginationParams } from 'src/common/interfaces/pagination.interface';
 import { PaginationResponseDto } from 'src/common/dtos/pagination.dto';
+import { RolesGuard } from 'src/modules/infrastructure/auth/roles.guard';
+import { HasRole } from 'src/common/decorators/has-role.decoratos';
 
 @Controller('prepos')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@HasRole(Role.TRAINER)
 export class PrePosController {
   constructor(private readonly prePosService: PrePosService) {}
 

@@ -17,18 +17,24 @@ import { Pagination } from 'src/common/decorators/pagination.decorator';
 import { PaginationResponseDto } from 'src/common/dtos/pagination.dto';
 import { PaginationParams } from 'src/common/interfaces/pagination.interface';
 import { JwtAuthGuard } from 'src/modules/infrastructure/auth/auth.guard';
-import { User } from 'src/modules/infrastructure/user/entities/user.entity';
+import {
+  Role,
+  User,
+} from 'src/modules/infrastructure/user/entities/user.entity';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 import { Evaluation } from './entities/evaluation.entity';
 import { EvaluationOrderBy } from './enums/order-by.enum';
 import { EvaluationService } from './evaluation.service';
 import { ResponseEvaluation } from './types/response-evaluation.type';
+import { RolesGuard } from 'src/modules/infrastructure/auth/roles.guard';
+import { HasRole } from 'src/common/decorators/has-role.decoratos';
 
 @ApiBearerAuth()
 @ApiTags('evaluation')
 @Controller('evaluation')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@HasRole(Role.TRAINER)
 export class EvaluationController {
   constructor(private readonly evaluationService: EvaluationService) {}
 
