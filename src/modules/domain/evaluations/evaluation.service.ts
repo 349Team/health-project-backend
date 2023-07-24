@@ -88,7 +88,7 @@ export class EvaluationService {
           user,
           type,
           student,
-        )
+        );
       case 'sarcopenia':
         return await this.sarcopeniaStrategy.create(
           data as CreateSarcopeniaDTO,
@@ -186,11 +186,11 @@ export class EvaluationService {
       );
 
     const { evaluations: batteryEvalution, count: countBatteryEvalution } =
-    await this.functionalBatteryStrategy.getAll(
-      orderBy as EvaluationOrderBy,
-      paginationParams,
-      studentID,
-    );
+      await this.functionalBatteryStrategy.getAll(
+        orderBy as EvaluationOrderBy,
+        paginationParams,
+        studentID,
+      );
 
     const {
       evaluations: sarcopeniaEvaluation,

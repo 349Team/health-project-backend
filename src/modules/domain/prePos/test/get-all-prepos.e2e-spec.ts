@@ -15,11 +15,11 @@ let studentId: string;
 beforeAll(async () => {
   const module = await Test.createTestingModule({
     imports: [
-      DatabaseTestModule, 
-      AuthModule, 
-      StudentModule, 
+      DatabaseTestModule,
+      AuthModule,
+      StudentModule,
       PrePosModule,
-      UserModule
+      UserModule,
     ],
   }).compile();
   app = module.createNestApplication();
@@ -57,7 +57,7 @@ beforeAll(async () => {
       emergencyContact: '44999499994',
       contact: '44999499994',
       address: 'Rua Lorem Ipsum',
-      note:			'teste',
+      note: 'teste',
       birthDate: '1960-06-12T03:00:00.000Z',
       flag: true,
     })
@@ -73,42 +73,38 @@ afterAll(async () => {
 describe('Buscar monitoramentos', () => {
   it(`/list (GET) deve receber um array vazio como resultado`, async () => {
     return await server
-      .get(
-        `/prepos/list`,
-      )
+      .get(`/prepos/list`)
       .set('Authorization', `Bearer ${token}`)
       .expect((res) => {
         expect(res.body.data).toStrictEqual([]);
       })
       .expect(200);
   });
-  
+
   it(`/list (GET) deve receber um array não vazio como resultado`, async () => {
     for (let i = 0; i < 5; i++) {
       await server
         .post('/prepos/create')
         .send({
-          horarioPos: "2015-04-23T18:25:43.511Z",
-          horarioPre: "2014-04-23T18:25:43.511Z",
+          horarioPos: '2015-04-23T18:25:43.511Z',
+          horarioPre: '2014-04-23T18:25:43.511Z',
           pasPre: 30,
-          pasPos:31,
-          padPre:28,
-          padPos:29,
+          pasPos: 31,
+          padPre: 28,
+          padPos: 29,
           glicemiaPre: 26,
           glicemiaPos: 27,
           horarioTreino: 20,
           pseEPre: 40,
           pseEPos: 41,
-          observacao: "teste",
+          observacao: 'teste',
           studentId: studentId,
         })
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${token}`);
     }
-    
+
     return await server
-      .get(
-        `/prepos/list`,
-      )
+      .get(`/prepos/list`)
       .set('Authorization', `Bearer ${token}`)
       .expect((res) => {
         expect(res.body.meta.totalItems).toBe(5);

@@ -58,7 +58,7 @@ beforeAll(async () => {
       emergencyContact: '44999999999',
       contact: '44999999999',
       address: 'Rua do seu Zé',
-      note:			'teste',
+      note: 'teste',
       birthDate: '2000-01-01T01:00:00.000Z',
       flag: true,
     })
@@ -72,50 +72,49 @@ afterAll(async () => {
 });
 
 describe('Buscar avaliação de AVD', () => {
-    it(`/:id?type=AVD (GET) deve receber erro ao buscar id inválido`, async () => {
-      id = 'aca8e3cd-2c41-4b7e-9e1f-f3d8206064a';
-  
-      return await server
-        .get(`/evaluation/${id}?type=AVD`)
-        .set('Authorization', `Bearer ${token}`)
-        .expect(400);
-    });
-  
-    it(`/:id?type=AVD (GET) deve receber erro ao buscar id válido porém inexistente`, async () => {
-      id = 'a9cd5ca1-6bba-46a9-ad3e-f7f4bde8eb8f';
-  
-      const teste = await server
-        .get(`/evaluation/${id}?type=AVD`)
-        .set('Authorization', `Bearer ${token}`)
-        .expect(404);
-  
-      return teste;
-    });
-  
-    it(`/:id?type=AVD (GET) deve retornar sucesso ao buscar id válido`, async () => {
-      const response = await server
-        .post(`/evaluation/${studentId}`)
-        .send({
-          "type": "AVD",
-          "data": {
-            "date" : "2022-11-08T04:00:00.000Z",
-            "bath" : 0,
-            "dress" : 0,
-            "bathroom" : 0,
-            "transfer" : 0,
-            "salute" : 0,
-            "feeding" : 0,
-            "result" : 6
-          }
-        })
-        .set('Authorization', `Bearer ${token}`);
-  
-      id = response.body.id;
-  
-      return await server
-        .get(`/evaluation/${id}?type=AVD`)
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200);
-    });
+  it(`/:id?type=AVD (GET) deve receber erro ao buscar id inválido`, async () => {
+    id = 'aca8e3cd-2c41-4b7e-9e1f-f3d8206064a';
+
+    return await server
+      .get(`/evaluation/${id}?type=AVD`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
   });
-  
+
+  it(`/:id?type=AVD (GET) deve receber erro ao buscar id válido porém inexistente`, async () => {
+    id = 'a9cd5ca1-6bba-46a9-ad3e-f7f4bde8eb8f';
+
+    const teste = await server
+      .get(`/evaluation/${id}?type=AVD`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(404);
+
+    return teste;
+  });
+
+  it(`/:id?type=AVD (GET) deve retornar sucesso ao buscar id válido`, async () => {
+    const response = await server
+      .post(`/evaluation/${studentId}`)
+      .send({
+        type: 'AVD',
+        data: {
+          date: '2022-11-08T04:00:00.000Z',
+          bath: 0,
+          dress: 0,
+          bathroom: 0,
+          transfer: 0,
+          salute: 0,
+          feeding: 0,
+          result: 6,
+        },
+      })
+      .set('Authorization', `Bearer ${token}`);
+
+    id = response.body.id;
+
+    return await server
+      .get(`/evaluation/${id}?type=AVD`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+  });
+});

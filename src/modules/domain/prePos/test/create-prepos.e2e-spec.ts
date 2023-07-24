@@ -15,11 +15,11 @@ let studentId: string;
 beforeAll(async () => {
   const module = await Test.createTestingModule({
     imports: [
-      DatabaseTestModule, 
-      AuthModule, 
-      StudentModule, 
+      DatabaseTestModule,
+      AuthModule,
+      StudentModule,
       PrePosModule,
-      UserModule
+      UserModule,
     ],
   }).compile();
   app = module.createNestApplication();
@@ -35,7 +35,7 @@ beforeAll(async () => {
       password: '12345678',
     })
     .expect(201);
-  
+
   const login = await server
     .post('/auth/login')
     .send({
@@ -57,7 +57,7 @@ beforeAll(async () => {
       emergencyContact: '44999499994',
       contact: '44999499994',
       address: 'Rua Lorem Ipsum',
-      note:			'teste',
+      note: 'teste',
       birthDate: '1960-06-12T03:00:00.000Z',
       flag: true,
     })
@@ -72,24 +72,23 @@ afterAll(async () => {
 
 //User
 describe('Create PrePos', () => {
-
   it('/create (CREATE) sucesso na criação', async () => {
     await server
       .post('/prepos/create')
       .send({
-        date: "2013-04-23T18:25:43.511Z",
-        horarioPos: "2015-04-23T18:25:43.511Z",
-        horarioPre: "2014-04-23T18:25:43.511Z",
+        date: '2013-04-23T18:25:43.511Z',
+        horarioPos: '2015-04-23T18:25:43.511Z',
+        horarioPre: '2014-04-23T18:25:43.511Z',
         pasPre: 30,
-        pasPos:31,
-        padPre:28,
-        padPos:29,
+        pasPos: 31,
+        padPre: 28,
+        padPos: 29,
         glicemiaPre: 26,
         glicemiaPos: 27,
         horarioTreino: 20,
         pseEPre: 40,
         pseEPos: 41,
-        observacao: "teste",
+        observacao: 'teste',
         studentId: studentId,
       })
       .set('Authorization', `Bearer ${token}`)

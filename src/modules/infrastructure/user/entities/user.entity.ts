@@ -5,6 +5,11 @@ import { Student } from 'src/modules/domain/student/entities/student.entity';
 import { Evaluation } from 'src/modules/domain/evaluations/entities/evaluation.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 
+export enum Role {
+  ADMIN = 'ADMIN',
+  TRAINER = 'TRAINER',
+}
+
 @Entity()
 export class User extends BaseEntity {
   @Column()
@@ -15,6 +20,13 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.TRAINER,
+  })
+  role: Role;
 
   @OneToMany(() => Student, (student) => student.user)
   students: Student[];

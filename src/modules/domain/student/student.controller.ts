@@ -13,13 +13,16 @@ import { JoiPipe } from 'nestjs-joi';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { JwtAuthGuard } from 'src/modules/infrastructure/auth/auth.guard';
-import { User } from '../../infrastructure/user/entities/user.entity';
+import { Role, User } from '../../infrastructure/user/entities/user.entity';
 import { AuthUser } from 'src/common/decorators/auth-user.decorator';
 import { Student } from './entities/student.entity';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { RolesGuard } from 'src/modules/infrastructure/auth/roles.guard';
+import { HasRole } from 'src/common/decorators/has-role.decoratos';
 
 @Controller('student')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@HasRole(Role.TRAINER)
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 

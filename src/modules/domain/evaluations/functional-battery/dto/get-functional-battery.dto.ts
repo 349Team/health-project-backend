@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 import { JoiSchema } from 'nestjs-joi';
 import { CreateFunctionalBatteryDto } from './create-functional-battery.dto';
 
-export class GetFunctionalBatteryDto extends CreateFunctionalBatteryDto  {
+export class GetFunctionalBatteryDto extends CreateFunctionalBatteryDto {
   @ApiProperty()
   @JoiSchema(Joi.string().guid().required())
   id: string;

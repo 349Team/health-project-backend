@@ -154,7 +154,7 @@ export class MiniCognitionFactory {
       },
       skip: (page - 1) * limit,
       take: limit,
-      relations: ['fields']
+      relations: ['fields'],
     });
 
     const parsedEvaluations: GetMiniCognitionDto[] = evaluation.map((item) => {

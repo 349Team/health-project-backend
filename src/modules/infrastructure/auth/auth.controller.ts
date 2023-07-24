@@ -6,19 +6,25 @@ import {
   HttpStatus,
   Inject,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JoiPipe } from 'nestjs-joi';
-import { User } from '../user/entities/user.entity';
+import { Role, User } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { UserDto } from './dto/user.dto';
 import * as fs from 'fs';
+import { JwtAuthGuard } from './auth.guard';
+import { RolesGuard } from './roles.guard';
+import { HasRole } from 'src/common/decorators/has-role.decoratos';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   @Inject(AuthService)
   private readonly service: AuthService;
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HasRole(Role.ADMIN)
   @Post('register')
   async register(
     @Body(new JoiPipe({ group: 'REGISTER' })) userDto: UserDto,

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationParams } from 'src/common/interfaces/pagination.interface';
 import { User } from 'src/modules/infrastructure/user/entities/user.entity';
@@ -15,110 +19,109 @@ import { UpdateAvdDto } from './dto/update-avd.dto';
 
 @Injectable()
 export class avdStrategy {
-    @InjectRepository(Evaluation)
-    private readonly evaluationRepository: Repository<Evaluation>;
-    
-    constructor(
-        private readonly avdFactory: avdFactory,
-    ) {}
+  @InjectRepository(Evaluation)
+  private readonly evaluationRepository: Repository<Evaluation>;
 
-    async create(
-        input: CreateAvdDto,
-        user: User,
-        type: string,
-        student: Student,
-    ): Promise<GetAvdDto> {
-        const validate = AvdSchema.validate(input);
+  constructor(private readonly avdFactory: avdFactory) {}
 
-        if (validate?.error) {
-            throw new BadRequestException(validate.error.message);
-        }
+  async create(
+    input: CreateAvdDto,
+    user: User,
+    type: string,
+    student: Student,
+  ): Promise<GetAvdDto> {
+    const validate = AvdSchema.validate(input);
 
-        const { date, bath, dress, bathroom, transfer, salute, feeding, result } = input;
-
-        const data: CreateAvdDto = {
-            date,
-            bath,
-            dress,
-            bathroom,
-            transfer,
-            salute,
-            feeding,
-            result,
-        };
-
-        return await this.avdFactory.create(
-            data,
-            user,
-            type,
-            student,
-        );
-    }
-    
-    async update(
-        id: string,
-        type: string,
-        input: UpdateAvdDto
-    ): Promise<GetAvdDto> {
-        const validate = AvdSchema.validate(input);
-
-        if (validate?.error) {
-            throw new BadRequestException(validate.error.message);
-        }
-
-        const evaluation = await this.evaluationRepository.findOne({
-            where: {
-                id,
-                deletedAt: null,
-            },
-            relations: ['fields', 'student'],
-        });
-
-        if (!evaluation) {
-            throw new NotFoundException('Evaluation not found');
-        }
-
-        const { date, bath, dress, bathroom, transfer, salute, feeding, result } = input;
-
-        const data: UpdateAvdDto = {
-            date,
-            bath,
-            dress,
-            bathroom,
-            transfer,
-            salute,
-            feeding,
-            result,
-        };
-
-        return await this.avdFactory.update(id, type, data, evaluation);
+    if (validate?.error) {
+      throw new BadRequestException(validate.error.message);
     }
 
-    async getAll(
-        orderBy: EvaluationOrderBy,
-        paginationParams: PaginationParams,
-        studentId: string,
-    ): Promise<GetAllAvdDto> {
-        const evaluations = await this.avdFactory.getAll(orderBy, paginationParams, studentId);
-    
-        const returnData: GetAllAvdDto = {
-            evaluations,
-            count: evaluations.length,
-        };
+    const { date, bath, dress, bathroom, transfer, salute, feeding, result } =
+      input;
 
-        return returnData;
+    const data: CreateAvdDto = {
+      date,
+      bath,
+      dress,
+      bathroom,
+      transfer,
+      salute,
+      feeding,
+      result,
+    };
+
+    return await this.avdFactory.create(data, user, type, student);
+  }
+
+  async update(
+    id: string,
+    type: string,
+    input: UpdateAvdDto,
+  ): Promise<GetAvdDto> {
+    const validate = AvdSchema.validate(input);
+
+    if (validate?.error) {
+      throw new BadRequestException(validate.error.message);
     }
 
-    async getByID(id: string): Promise<GetAvdDto> {
-        const evaluation = await this.evaluationRepository.findOne({
-            where: { id, deletedAt: null },
-            relations: ['fields'],
-        });
+    const evaluation = await this.evaluationRepository.findOne({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      relations: ['fields', 'student'],
+    });
 
-        if(!evaluation){
-            throw new NotFoundException(`Avaliação com id ${id} não encontrada`);
-        }
-
-        return this.avdFactory.getOne(evaluation);
+    if (!evaluation) {
+      throw new NotFoundException('Evaluation not found');
     }
+
+    const { date, bath, dress, bathroom, transfer, salute, feeding, result } =
+      input;
+
+    const data: UpdateAvdDto = {
+      date,
+      bath,
+      dress,
+      bathroom,
+      transfer,
+      salute,
+      feeding,
+      result,
+    };
+
+    return await this.avdFactory.update(id, type, data, evaluation);
+  }
+
+  async getAll(
+    orderBy: EvaluationOrderBy,
+    paginationParams: PaginationParams,
+    studentId: string,
+  ): Promise<GetAllAvdDto> {
+    const evaluations = await this.avdFactory.getAll(
+      orderBy,
+      paginationParams,
+      studentId,
+    );
+
+    const returnData: GetAllAvdDto = {
+      evaluations,
+      count: evaluations.length,
+    };
+
+    return returnData;
+  }
+
+  async getByID(id: string): Promise<GetAvdDto> {
+    const evaluation = await this.evaluationRepository.findOne({
+      where: { id, deletedAt: null },
+      relations: ['fields'],
+    });
+
+    if (!evaluation) {
+      throw new NotFoundException(`Avaliação com id ${id} não encontrada`);
+    }
+
+    return this.avdFactory.getOne(evaluation);
+  }
 }

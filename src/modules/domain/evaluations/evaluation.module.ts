@@ -20,7 +20,7 @@ import { BalanceFactory } from './balance/balance.factory';
 import { BodyCompositionStrategy } from './body-composition/body-composition.strategy';
 import { BodyCompositionFactory } from './body-composition/body-composition.factory';
 import { FunctionalBatteryFactory } from './functional-battery/functional-battery-factory';
-import { FunctionalBatteryStrategy } from './functional-battery/functional-battery.strategy'
+import { FunctionalBatteryStrategy } from './functional-battery/functional-battery.strategy';
 import { FragilityStrategy } from './fragility/fragility.strategy';
 import { FragilityFactory } from './fragility/fragility.factory';
 

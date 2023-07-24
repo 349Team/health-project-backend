@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from "@nestjs/typeorm";
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Evaluation } from '../entities/evaluation.entity';
 import { Field } from '../entities/field.entity';
@@ -15,176 +15,171 @@ import { PaginationParams } from 'src/common/interfaces/pagination.interface';
 
 @Injectable()
 export class avdFactory {
-    @InjectRepository(Evaluation)
-    private readonly evaluationRepository: Repository<Evaluation>;
+  @InjectRepository(Evaluation)
+  private readonly evaluationRepository: Repository<Evaluation>;
 
-    @InjectRepository(Field)
-    private readonly fieldRepository: Repository<Field>;
+  @InjectRepository(Field)
+  private readonly fieldRepository: Repository<Field>;
 
-    private parseFieldToString(
-        data: Partial<CreateAvdDto>
-    )   {
-        const values = Object.entries(data);
-        const inputs = [];
+  private parseFieldToString(data: Partial<CreateAvdDto>) {
+    const values = Object.entries(data);
+    const inputs = [];
 
-        values.forEach(([key, value]) => {
-            let type: string = typeof value;
-            if (type === 'number') type = Number.isInteger(value) ? 'int' : 'float';
-            if (type === 'string') type = dayjs(value).isValid() ? 'date' : 'string';
-        
-            inputs.push({
-                name: key,
-                value: String(value),
-                dataType: type,
-            });
-        });
-        
-        return inputs;
-    }
+    values.forEach(([key, value]) => {
+      let type: string = typeof value;
+      if (type === 'number') type = Number.isInteger(value) ? 'int' : 'float';
+      if (type === 'string') type = dayjs(value).isValid() ? 'date' : 'string';
 
-    private parseFieldsToCorrectType(
-        data: Evaluation
-    ): GetAvdDto {
-        const { id, name, createdAt, updatedAt, deletedAt, result, fields } = data;
+      inputs.push({
+        name: key,
+        value: String(value),
+        dataType: type,
+      });
+    });
 
-        const parsedFields: Partial<IAVD> = {};
+    return inputs;
+  }
 
-        fields.forEach(({ name, value, dataType }) => {
-            const formattedValue = parseType(dataType, value);
+  private parseFieldsToCorrectType(data: Evaluation): GetAvdDto {
+    const { id, name, createdAt, updatedAt, deletedAt, result, fields } = data;
 
-            parsedFields[name] = formattedValue;
-        });
+    const parsedFields: Partial<IAVD> = {};
 
-        const { date, bath, dress, bathroom, transfer, salute, feeding } = parsedFields;
+    fields.forEach(({ name, value, dataType }) => {
+      const formattedValue = parseType(dataType, value);
 
-        const returnData: GetAvdDto = {
-            id,
-            name,
-            date,
-            bath,
-            dress,
-            bathroom,
-            transfer,
-            salute,
-            feeding,
-            result,
-            createdAt,
-            updatedAt,
-            deletedAt,
-        };
+      parsedFields[name] = formattedValue;
+    });
 
-        return returnData;
-    }
+    const { date, bath, dress, bathroom, transfer, salute, feeding } =
+      parsedFields;
 
-    async create(
-        input: CreateAvdDto,
-        user: User,
-        type: string,
-        student: Student,
-    ): Promise<GetAvdDto> {
-        const { result, ...rest } = input;
+    const returnData: GetAvdDto = {
+      id,
+      name,
+      date,
+      bath,
+      dress,
+      bathroom,
+      transfer,
+      salute,
+      feeding,
+      result,
+      createdAt,
+      updatedAt,
+      deletedAt,
+    };
 
-        const arrayOfFields = this.parseFieldToString(rest);
+    return returnData;
+  }
 
-        let evaluation = this.evaluationRepository.create({
-            name: type,
-            result,
-            createdBy: user,
-            student,
-        });
-        
-        evaluation = await this.evaluationRepository.save(evaluation);
+  async create(
+    input: CreateAvdDto,
+    user: User,
+    type: string,
+    student: Student,
+  ): Promise<GetAvdDto> {
+    const { result, ...rest } = input;
 
-        const fields: Field[] = await Promise.all(
-            arrayOfFields.map(async (field) => {
-                const entityField = this.fieldRepository.create({
-                    ...field,
-                    evaluation,
-                } as Field);
+    const arrayOfFields = this.parseFieldToString(rest);
 
-                return await this.fieldRepository.save(entityField);
-            }),
-        );
+    let evaluation = this.evaluationRepository.create({
+      name: type,
+      result,
+      createdBy: user,
+      student,
+    });
 
-        evaluation.fields = fields;
-        const { id } = evaluation
-        await evaluation.save();
+    evaluation = await this.evaluationRepository.save(evaluation);
 
-        evaluation = await this.evaluationRepository.findOne({
-            where: {
-                id: id,
-            },
-            relations: ['fields'],
-        });
+    const fields: Field[] = await Promise.all(
+      arrayOfFields.map(async (field) => {
+        const entityField = this.fieldRepository.create({
+          ...field,
+          evaluation,
+        } as Field);
 
-        return this.parseFieldsToCorrectType(evaluation);
-    }
+        return await this.fieldRepository.save(entityField);
+      }),
+    );
 
-    async update(
-        id: string,
-        type: string,
-        input: CreateAvdDto,
-        evaluation: Evaluation,
-    ): Promise<GetAvdDto> {
-        const { result, ...rest } = input;
-        
-        const fieldArray = this.parseFieldToString(rest);
+    evaluation.fields = fields;
+    const { id } = evaluation;
+    await evaluation.save();
 
-        const { fields } = evaluation;
+    evaluation = await this.evaluationRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['fields'],
+    });
 
-        await Promise.all(
-            fieldArray.map((field, index) => {
-                const entityField: Field = fields[index];
-                
-                entityField.name = field.name;
-                entityField.value = field.value;
-                entityField.dataType = field.dataType;
+    return this.parseFieldsToCorrectType(evaluation);
+  }
 
-                return this.fieldRepository.update(entityField.id, entityField);
-            }),
-        );
-            
-        evaluation.updatedAt = new Date();
-        evaluation.result = result
+  async update(
+    id: string,
+    type: string,
+    input: CreateAvdDto,
+    evaluation: Evaluation,
+  ): Promise<GetAvdDto> {
+    const { result, ...rest } = input;
 
-        evaluation.save();
+    const fieldArray = this.parseFieldToString(rest);
 
-        return this.parseFieldsToCorrectType(evaluation);
-    }
+    const { fields } = evaluation;
 
-    async getAll(
-        orderBy: EvaluationOrderBy,
-        paginationParams: PaginationParams,
-        student: string,
-    ): Promise<GetAvdDto[]> {
-        const { page, limit } = paginationParams;
+    await Promise.all(
+      fieldArray.map((field, index) => {
+        const entityField: Field = fields[index];
 
-        const evaluations = await this.evaluationRepository.find({
-            where: {
-                name: 'AVD',
-                deletedAt: null,
-                student: {
-                    id: student,
-                },
-            },
-            skip: (page - 1) * limit,
-            take: limit,
-            relations: ['fields'],
-            order: {
-                [orderBy]: 'DESC',
-            },
-        });
+        entityField.name = field.name;
+        entityField.value = field.value;
+        entityField.dataType = field.dataType;
 
-        const parsedEvaluations: GetAvdDto[] = evaluations.map((item) => {
-            return this.parseFieldsToCorrectType(item);
-        });
+        return this.fieldRepository.update(entityField.id, entityField);
+      }),
+    );
 
-        return parsedEvaluations;
-    }
+    evaluation.updatedAt = new Date();
+    evaluation.result = result;
 
-    async getOne(
-        evaluation: Evaluation,
-    ): Promise<GetAvdDto> {
-        return this.parseFieldsToCorrectType(evaluation);
-    }
+    evaluation.save();
+
+    return this.parseFieldsToCorrectType(evaluation);
+  }
+
+  async getAll(
+    orderBy: EvaluationOrderBy,
+    paginationParams: PaginationParams,
+    student: string,
+  ): Promise<GetAvdDto[]> {
+    const { page, limit } = paginationParams;
+
+    const evaluations = await this.evaluationRepository.find({
+      where: {
+        name: 'AVD',
+        deletedAt: null,
+        student: {
+          id: student,
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+      relations: ['fields'],
+      order: {
+        [orderBy]: 'DESC',
+      },
+    });
+
+    const parsedEvaluations: GetAvdDto[] = evaluations.map((item) => {
+      return this.parseFieldsToCorrectType(item);
+    });
+
+    return parsedEvaluations;
+  }
+
+  async getOne(evaluation: Evaluation): Promise<GetAvdDto> {
+    return this.parseFieldsToCorrectType(evaluation);
+  }
 }

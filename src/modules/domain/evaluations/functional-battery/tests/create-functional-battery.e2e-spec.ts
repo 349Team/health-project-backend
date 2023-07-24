@@ -28,25 +28,25 @@ beforeAll(async () => {
   server = request(app.getHttpServer());
 
   await server
-  .post('/auth/register')
-  .send({
-    email: 'test@test.com',
-    name: 'teste',
-    password: '12345678',
-  })
-  .expect(201);
+    .post('/auth/register')
+    .send({
+      email: 'test@test.com',
+      name: 'teste',
+      password: '12345678',
+    })
+    .expect(201);
 
-const login = await server
-  .post('/auth/login')
-  .send({
-    email: 'test@test.com',
-    password: '12345678',
-  })
-  .expect(200);
+  const login = await server
+    .post('/auth/login')
+    .send({
+      email: 'test@test.com',
+      password: '12345678',
+    })
+    .expect(200);
 
-token = login.text;
+  token = login.text;
 
-const student = await server
+  const student = await server
     .post('/student/create')
     .send({
       name: 'Estudante Testte',
@@ -68,39 +68,38 @@ const student = await server
 });
 
 afterAll(async () => {
-    await app.close();
-  });
+  await app.close();
+});
 
-  describe('Criar avaliações de bateria funcional', () => {
-    it(`/:studentId (CREATE) sucesso na criação`, async () => {
-      return await server
-        .post(`/evaluation/${studentId}`)
-        .send({
-          type: 'functionalBattery',
-          data: {
-            date: '2022-10-12T03:00:00.000Z', 
-            sitAndDownResult: 21,
-            sitAndDownPercent: 85,
-            sitAndDownClassification:'ÓTIMO',
-            elbowFlexionResult: 21,
-            elbowFlexionPercent: 65,
-            elbowFlexionClassification: 'BOM',
-            marchWouldParkResult: 98,
-            marchWouldParkPercent: 45,
-            marchWouldParkClassification: 'REGULAR',
-            sitAndReachYourFeetResult: 6.7,
-            sitAndReachYourFeetPercent: 90,
-            sitAndReachYourFeetClassification: 'ÓTIMO',
-            reachTheBackResult: -9.5,
-            reachTheBackPercent: 10,
-            reachTheBackClassification: 'RUIM',
-            tugResult: 3.3,
-            tugPercent: 85,
-            tugClassification: 'ÓTIMO'
-          },
-        })
-        .set('Authorization', `Bearer ${token}`)
-        .expect(201);
-    });
-  
+describe('Criar avaliações de bateria funcional', () => {
+  it(`/:studentId (CREATE) sucesso na criação`, async () => {
+    return await server
+      .post(`/evaluation/${studentId}`)
+      .send({
+        type: 'functionalBattery',
+        data: {
+          date: '2022-10-12T03:00:00.000Z',
+          sitAndDownResult: 21,
+          sitAndDownPercent: 85,
+          sitAndDownClassification: 'ÓTIMO',
+          elbowFlexionResult: 21,
+          elbowFlexionPercent: 65,
+          elbowFlexionClassification: 'BOM',
+          marchWouldParkResult: 98,
+          marchWouldParkPercent: 45,
+          marchWouldParkClassification: 'REGULAR',
+          sitAndReachYourFeetResult: 6.7,
+          sitAndReachYourFeetPercent: 90,
+          sitAndReachYourFeetClassification: 'ÓTIMO',
+          reachTheBackResult: -9.5,
+          reachTheBackPercent: 10,
+          reachTheBackClassification: 'RUIM',
+          tugResult: 3.3,
+          tugPercent: 85,
+          tugClassification: 'ÓTIMO',
+        },
+      })
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201);
   });
+});

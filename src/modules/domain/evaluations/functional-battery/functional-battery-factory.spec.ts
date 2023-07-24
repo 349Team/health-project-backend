@@ -9,9 +9,7 @@ describe('FunctionalBatteryFactory', () => {
       providers: [FunctionalBatteryFactory],
     }).compile();
 
-    service = module.get<FunctionalBatteryFactory>(
-      FunctionalBatteryFactory
-      );
+    service = module.get<FunctionalBatteryFactory>(FunctionalBatteryFactory);
   });
 
   it('should be defined', () => {
