@@ -2,9 +2,13 @@ import {
   createParamDecorator,
   ExecutionContext,
   ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TokenInterface } from '../interfaces/token.interface';
+import {
+  AuthUserDTO,
+  AuthUserDTOSchema,
+} from 'src/modules/infrastructure/user/dto/auth-user.dto';
 
 export function AuthUser() {
   const jwtService: JwtService = new JwtService();
@@ -12,13 +16,22 @@ export function AuthUser() {
   return createParamDecorator(
     async (_data: unknown, context: ExecutionContext) => {
       const request = context.switchToHttp().getRequest();
-      const token = request.headers.authorization.split(' ')[1];
 
-      if (!token) throw new ForbiddenException('User not logged in');
+      const validated = AuthUserDTOSchema.validate(request.user, {
+        stripUnknown: true,
+      });
 
-      const decodedToken = jwtService.decode(token) as TokenInterface;
+      if (validated.error) {
+        const errorMessages = validated.error.details
+          .map((d) => d.message)
+          .join();
 
-      return { id: decodedToken.id };
+        throw new InternalServerErrorException(
+          'Schema validate error on AuthUser param decorator: ' + errorMessages,
+        );
+      }
+
+      return validated.value as AuthUserDTO;
     },
   )();
 }
