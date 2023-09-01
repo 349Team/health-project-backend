@@ -7,5 +7,5 @@ all:
 
 start:
 	docker-compose up -d --build
-	sleep 3.0
+	timeout 3
 	yarn start:dev
