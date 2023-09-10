@@ -6,6 +6,7 @@ import {
   Get,
   Patch,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { Role, User } from '../user/entities/user.entity';
@@ -34,11 +35,10 @@ export class UserController {
   @HasRole(Role.ADMIN, Role.TRAINER)
   @Patch('editMe/:id')
   updateUser(
-    @AuthUser() user: User,
     @Param('id') id: string,
     @Body(new JoiPipe({ group: 'EDIT' })) updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.userService.updateUser(updateUserDto, user.id);
+    return this.userService.updateUser(updateUserDto, id);
   }
 
   @HasRole(Role.ADMIN)
@@ -46,4 +46,28 @@ export class UserController {
   async remove(@Param('id') id: string) {
     return await this.userService.remove(id);
   }
+
+  @HasRole(Role.ADMIN)
+  @Get('trainer')
+  async findTrainer(): Promise<User[]> {
+    return this.userService.findTrainer();
+  }
+
+  @HasRole(Role.ADMIN)
+  @Get('index')
+  async findAll(): Promise<User[]> {
+    return this.userService.findAll();
+  }
+
+  @HasRole(Role.ADMIN)
+  @Get('show/:id')
+  async show(
+    @AuthUser() user: User,
+    @Param('id') id: string,
+  ): Promise<User>{
+    if(!user) throw new ForbiddenException('Sessão de usuário inválida');
+    if (!id) throw new ForbiddenException('Informe o ID do aluno'); 
+    return await this.userService.findOne(id);
+  }
+  
 }
