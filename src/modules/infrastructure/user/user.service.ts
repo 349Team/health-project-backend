@@ -32,6 +32,10 @@ export class UsersService {
     return await this.usersRepository.find();
   }
 
+  async findTrainer() {
+    return await this.usersRepository.find({ where: { role: Role.TRAINER } });
+  }
+
   async findOne(id: string) {
     return await this.usersRepository.findOneBy({ id });
   }
